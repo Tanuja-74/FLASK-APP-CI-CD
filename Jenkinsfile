@@ -10,7 +10,7 @@ pipeline {
 
         stage('Run App') {
             steps {
-                sh 'pm2 restart flask-app || pm2 start frontend-flask/app.py --name flask-app'
+                sh '/usr/bin/pm2 restart flask-app || /usr/bin/pm2 start frontend-flask/app.py --name flask-app --interpreter python3'
             }
         }
     }
