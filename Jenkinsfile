@@ -2,15 +2,32 @@ pipeline {
     agent any
 
     stages {
-        stage('Install Dependencies') {
+
+        stage('Clone') {
             steps {
-                sh 'pip3 install -r frontend-flask/requirements.txt'
+                git credentialsId: 'github-creds', url: 'https://github.com/Tanuja-74/FLASK-APP-CI-CD.git'
             }
         }
 
-        stage('Run App') {
+        stage('Install') {
             steps {
-                sh '/usr/bin/pm2 restart flask-app || /usr/bin/pm2 start frontend-flask/app.py --name flask-app --interpreter python3'
+                dir('frontend-flask') {
+                    sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Run') {
+            steps {
+                dir('frontend-flask') {
+                    sh '''
+                    pm2 restart flask-app || pm2 start app.py --name flask-app --interpreter python3
+                    '''
+                }
             }
         }
     }
